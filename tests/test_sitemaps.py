@@ -92,35 +92,33 @@ def _make_sgvfcfni_test(i):
     return _test
 
 
-def _gen_random_nums_of_items():
-    yield 1
-    yield 9
-    yield 123
-    yield sitemaps.PER_MAP
-    yield sitemaps.PER_MAP - 1
-    yield 41432
-    yield 77777
-    yield sitemaps.PER_MAP * sitemaps.PER_INDEX
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) + 1
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) + 2
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) + 3
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) + 4
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) + 5
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) * 2
-    yield ((sitemaps.PER_MAP * sitemaps.PER_INDEX) * 2) + 1
-    yield ((sitemaps.PER_MAP * sitemaps.PER_INDEX) * 2) + 2
-    yield ((sitemaps.PER_MAP * sitemaps.PER_INDEX) * 2) + 3
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) * 3
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) * 4
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) * 5
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) * 10
-    yield (sitemaps.PER_MAP * sitemaps.PER_INDEX) * 11
-
-
 class ItemsTestCaseMeta(type):
+    ARBITRARY_NUMBERS_OF_ITEMS = (
+        1,
+        9,
+        123,
+        sitemaps.PER_MAP,
+        sitemaps.PER_MAP - 1,
+        41432,
+        77777,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX + 1,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX + 2,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX + 3,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX + 4,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX + 5,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX * 2,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX * 2 + 1,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX * 2 + 2,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX * 2 + 3,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX * 3,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX * 4,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX * 5,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX * 10,
+        sitemaps.PER_MAP * sitemaps.PER_INDEX * 11)
 
     def __new__(cls, name, bases, attrs):
-        for i in _gen_random_nums_of_items():
+        for i in cls.ARBITRARY_NUMBERS_OF_ITEMS:
             attrs[
                 (
                     "test_should_generate_valid_files_correctly_for_"
