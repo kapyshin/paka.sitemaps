@@ -31,9 +31,8 @@ def gen_sitemap_lines(context):
     <https://www.sitemaps.org/protocol.html#submit_robots>`_
 
     """
-    for i in range(
-        1,
-        len(glob.glob(os.path.join(context.fs_root, "i*"))) + 1
-    ):
+    indexes = range(
+        1, len(glob.glob(os.path.join(context.fs_root, "i*"))) + 1)
+    for i in indexes:
         yield "Sitemap: {}".format(
             urljoin(context.base_url, "i{}.xml".format(i)))

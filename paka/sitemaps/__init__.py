@@ -134,7 +134,7 @@ class Context:
             if lastmod:
                 lastmod_el = ET.Element("lastmod")
                 # Must be UTC.
-                lastmod_el.text = self._format_dt(lastmod)
+                lastmod_el.text = _format_dt(lastmod)
                 url_el.append(lastmod_el)
 
             changefreq = item.get("c")
@@ -154,26 +154,16 @@ class Context:
         # Save XML.
         fs_path = os.path.join(
             self.fs_root,
-            self._make_sitemap_name(self._num_indexes, self._num_maps),
-        )
+            _make_sitemap_name(self._num_indexes, self._num_maps))
         ET.ElementTree(root_el).write(
-            fs_path,
-            encoding="utf-8",
-            xml_declaration=True,
-        )
-
-    def _format_dt(self, dt):
-        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-
-    def _make_sitemap_name(self, idx, map):
-        return "s{}-{}.xml".format(idx, map)
+            fs_path, encoding="utf-8", xml_declaration=True)
 
     def _write_index(self):
         # Build XML.
         root_el = ET.Element("sitemapindex", {"xmlns": XMLNS})
 
         for i in range(1, self._num_maps + 1):
-            name = self._make_sitemap_name(self._num_indexes, i)
+            name = _make_sitemap_name(self._num_indexes, i)
 
             map_el = ET.Element("sitemap")
 
@@ -182,18 +172,21 @@ class Context:
             map_el.append(loc_el)
 
             lastmod_el = ET.Element("lastmod")
-            lastmod_el.text = self._format_dt(datetime.datetime.utcnow())
+            lastmod_el.text = _format_dt(datetime.datetime.utcnow())
             map_el.append(lastmod_el)
 
             root_el.append(map_el)
 
         # Save XML.
         fs_path = os.path.join(
-            self.fs_root,
-            "i{}.xml".format(self._num_indexes),
-        )
+            self.fs_root, "i{}.xml".format(self._num_indexes))
         ET.ElementTree(root_el).write(
-            fs_path,
-            encoding="utf-8",
-            xml_declaration=True,
-        )
+            fs_path, encoding="utf-8", xml_declaration=True)
+
+
+def _format_dt(dt_obj):
+    return dt_obj.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _make_sitemap_name(index_idx, map_idx):
+    return "s{}-{}.xml".format(index_idx, map_idx)
