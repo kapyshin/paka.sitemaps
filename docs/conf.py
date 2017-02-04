@@ -60,6 +60,7 @@ todo_include_todos = False
 autoclass_content = 'both'
 
 autodoc_member_order = 'bysource'
+autodoc_default_flags = ['members', 'undoc-members']
 
 
 # -- Fix for "py:obj reference target not found" --------------------------
