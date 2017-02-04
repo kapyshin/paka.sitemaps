@@ -1,3 +1,12 @@
+"""Sitemap and sitemap index building.
+
+See also
+--------
+`sitemaps.org protocol <https://www.sitemaps.org/protocol.html>`_
+has more information on format of XML this module generates.
+
+"""
+
 import os
 import enum
 import datetime
@@ -5,12 +14,14 @@ import datetime
 from six.moves.urllib.parse import urljoin
 from lxml import etree as ET
 
-
+#: Maximum number of items.
 PER_MAP = PER_INDEX = 50000
 XMLNS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
 
 class ChangefreqEnum(enum.Enum):
+    """How frequently page is going to change."""
+
     always = 1
     hourly = 2
     daily = 3
@@ -22,17 +33,28 @@ class ChangefreqEnum(enum.Enum):
 
 class Context:
     """Incrementally constructs and saves sitemaps and indexes of them.
-    Note: it targets large websites (> PER_MAP URLs), that's why it uses
-    sitemap indexes initially. Small websites do not need sitemaps, anyway.
+
+    This builder has few limitations:
+
+    * sitemap indexes are used for any number of URLs, even below
+      :py:const:`PER_MAP`
+    * currently only counts of items inside sitemaps and indexes are
+      considered (total size limitations are not respected yet)
 
     """
+
     changefreq = ChangefreqEnum
 
     def __init__(self, fs_root, base_url):
-        """
-        Arguments (both required):
-        fs_root: root dir for generated sitemaps and sitemap indexes
-        base_url: URL of site these sitemaps and sitemap indexes belong to
+        """Create builder with FS root path and base URL.
+
+        Parameters
+        ----------
+        fs_root: str
+            Path to root dir for generated sitemaps and sitemap indexes.
+        base_url: str
+            URL of site these sitemaps and sitemap indexes belong to
+            (e.g. ``http://example.org/``).
 
         """
         self.fs_root = fs_root
@@ -45,13 +67,18 @@ class Context:
         self._num_indexes = 1
 
     def add(self, path, lastmod=None, changefreq=None, priority=None):
-        """Add path to sitemap.
+        """Add page to sitemap.
 
-        Arguments:
-        path: URL path (not URL; required)
-        lastmod: date of the last modification (datetime; must be UTC)
-        changefreq: how frequently page is likely to change
-        priority: priority of this path relative to other paths
+        Parameters
+        ----------
+        path: str
+            URL path of page (e.g. ``/something/``).
+        lastmod: datetime.datetime
+            Date & time of the last modification (must be UTC).
+        changefreq: ChangefreqEnum
+            How frequently page is likely to change.
+        priority: str
+            Priority of this path relative to other paths.
 
         """
         item = {"p": path}
@@ -85,6 +112,12 @@ class Context:
             self._num_maps += 1
 
     def close(self):
+        """Finish writing to file system.
+
+        Make sure you always close builder, as this method
+        ensures current in-memory data (if any) is also written.
+
+        """
         self._update(force=True)
 
     def _write_map(self):
