@@ -1,5 +1,5 @@
-Welcome to paka.sitemaps's documentation!
-=========================================
+paka.sitemaps
+=============
 
 .. toctree::
    :maxdepth: 2
