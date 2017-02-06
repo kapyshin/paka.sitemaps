@@ -79,7 +79,7 @@ class Context:
             Date & time of the last modification (must be UTC).
         changefreq: ChangefreqEnum
             How frequently page is likely to change.
-        priority: str
+        priority: float or str
             Priority of this path relative to other paths.
 
         """
@@ -91,7 +91,9 @@ class Context:
         if changefreq:
             item["c"] = changefreq
 
-        if priority:
+        if priority is not None:
+            if isinstance(priority, (float, int)):
+                priority = "{:.1f}".format(priority)
             item["y"] = priority
 
         if self._items_count == PER_MAP:

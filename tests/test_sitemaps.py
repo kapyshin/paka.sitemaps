@@ -37,6 +37,10 @@ class ContextTestCase(unittest.TestCase):
         self._fs_root.cleanup()
 
 
+def list_maps(fs_root):
+    return glob.glob(os.path.join(fs_root, "s*"))
+
+
 def _make_kwargs(i):
     kwargs = {"path": "/lalala/{}/".format(i)}
     ds = (
@@ -59,7 +63,7 @@ def _make_sgvfcfni_test(i):
             self.ctx.add(**_make_kwargs(j))
         self.ctx.close()
 
-        maps = glob.glob(os.path.join(self.fs_root, "s*"))
+        maps = list_maps(self.fs_root)
         indexes = glob.glob(os.path.join(self.fs_root, "i*"))
 
         # Number of maps = number of items / sitemaps.PER_MAP
@@ -156,6 +160,33 @@ class ItemsTestCase(ContextTestCase):
             url.find("s:loc", namespaces=self.ns).text
             for url in tree.findall("s:sitemap", namespaces=self.ns)
         ]
+
+    def add_with_priority_and_parse(self, priority):
+        self.ctx.add("/some/thing/", priority=priority)
+        self.ctx.close()
+        fs_path = list_maps(self.fs_root)[0]
+        return etree.parse(fs_path).findtext(
+            "//s:priority", namespaces=self.ns)
+
+    def test_string_priority(self):
+        priority = self.add_with_priority_and_parse("0.3")
+        self.assertEqual(priority, "0.3")
+
+    def test_float_priority(self):
+        priority = self.add_with_priority_and_parse(.7)
+        self.assertEqual(priority, "0.7")
+
+    def test_zero_float_priority(self):
+        priority = self.add_with_priority_and_parse(.0)
+        self.assertEqual(priority, "0.0")
+
+    def test_zero_int_priority(self):
+        priority = self.add_with_priority_and_parse(0)
+        self.assertEqual(priority, "0.0")
+
+    def test_one_int_priority(self):
+        priority = self.add_with_priority_and_parse(1)
+        self.assertEqual(priority, "1.0")
 
 
 class RobotsTestCase(ContextTestCase):
