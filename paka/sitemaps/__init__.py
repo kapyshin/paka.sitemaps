@@ -14,8 +14,10 @@ import datetime
 from six.moves.urllib.parse import urljoin
 from lxml import etree as ET
 
-#: Maximum number of items.
+
 PER_MAP = PER_INDEX = 50000
+"""Maximum number of items."""
+
 XMLNS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
 
