@@ -19,6 +19,7 @@ PER_MAP = PER_INDEX = 50000
 """Maximum number of items."""
 
 XMLNS = "http://www.sitemaps.org/schemas/sitemap/0.9"
+"""Standard namespace."""
 
 
 class ChangefreqEnum(enum.Enum):
