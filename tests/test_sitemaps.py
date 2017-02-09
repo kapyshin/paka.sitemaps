@@ -173,11 +173,7 @@ class ItemsTestCase(ContextTestCase):
             "//s:{}".format(name), namespaces=self.ns)
 
     def add_with_priority_and_parse(self, priority):
-        self.ctx.add("/some/thing/", priority=priority)
-        self.ctx.close()
-        fs_path = list_maps(self.fs_root)[0]
-        return etree.parse(fs_path).findtext(
-            "//s:priority", namespaces=self.ns)
+        return self.add_and_parse("priority", priority)
 
     def add_with_changefreq_and_parse(self, changefreq):
         return self.add_and_parse("changefreq", changefreq)
