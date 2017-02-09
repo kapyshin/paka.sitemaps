@@ -41,12 +41,16 @@ def list_maps(fs_root):
     return glob.glob(os.path.join(fs_root, "s*"))
 
 
+def get_random_changefreq():
+    return random.choice(list(sitemaps.Changefreq))
+
+
 def _make_kwargs(i):
     kwargs = {"path": "/lalala/{}/".format(i)}
     ds = (
         {},
         {"lastmod": datetime.datetime.utcnow()},
-        {"changefreq": random.choice(list(sitemaps.Context.changefreq))},
+        {"changefreq": get_random_changefreq()},
         {"priority": "{:.1f}".format(random.random())},
     )
     r = random.randint(0, 5)
@@ -161,12 +165,22 @@ class ItemsTestCase(ContextTestCase):
             for url in tree.findall("s:sitemap", namespaces=self.ns)
         ]
 
+    def add_and_parse(self, name, value):
+        self.ctx.add("/some/thing/", **{name: value})
+        self.ctx.close()
+        fs_path = list_maps(self.fs_root)[0]
+        return etree.parse(fs_path).findtext(
+            "//s:{}".format(name), namespaces=self.ns)
+
     def add_with_priority_and_parse(self, priority):
         self.ctx.add("/some/thing/", priority=priority)
         self.ctx.close()
         fs_path = list_maps(self.fs_root)[0]
         return etree.parse(fs_path).findtext(
             "//s:priority", namespaces=self.ns)
+
+    def add_with_changefreq_and_parse(self, changefreq):
+        return self.add_and_parse("changefreq", changefreq)
 
     def test_string_priority(self):
         priority = self.add_with_priority_and_parse("0.3")
@@ -187,6 +201,17 @@ class ItemsTestCase(ContextTestCase):
     def test_one_int_priority(self):
         priority = self.add_with_priority_and_parse(1)
         self.assertEqual(priority, "1.0")
+
+    def test_random_changefreq_member(self):
+        random_freq = get_random_changefreq()
+        self.assertIn(random_freq, sitemaps.Changefreq)
+        parsed = self.add_with_changefreq_and_parse(random_freq)
+        self.assertEqual(random_freq.value, parsed)
+
+    def test_str_changefreq(self):
+        freq = "sometimes"
+        parsed = self.add_with_changefreq_and_parse(freq)
+        self.assertEqual(freq, parsed)
 
 
 class RobotsTestCase(ContextTestCase):

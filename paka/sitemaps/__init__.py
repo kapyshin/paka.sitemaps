@@ -22,16 +22,25 @@ XMLNS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 """Standard namespace."""
 
 
-class ChangefreqEnum(enum.Enum):
+class Changefreq(enum.Enum):
     """How frequently page is going to change."""
 
-    always = 1
-    hourly = 2
-    daily = 3
-    weekly = 4
-    monthly = 5
-    yearly = 6
-    never = 7
+    always = "always"
+    hourly = "hourly"
+    daily = "daily"
+    weekly = "weekly"
+    monthly = "monthly"
+    yearly = "yearly"
+    never = "never"
+
+
+ChangefreqEnum = Changefreq
+"""Deprecated alias for :py:class:`Changefreq`.
+
+.. deprecated:: 1.5
+
+    Use :py:class:`Changefreq` instead.
+"""
 
 
 class Context:
@@ -78,7 +87,7 @@ class Context:
             URL path of page (e.g. ``/something/``).
         lastmod: datetime.datetime
             Date & time of the last modification (must be UTC).
-        changefreq: ChangefreqEnum
+        changefreq: str or Changefreq
             How frequently page is likely to change.
         priority: float or str
             Priority of this path relative to other paths.
@@ -90,7 +99,7 @@ class Context:
             item["l"] = lastmod
 
         if changefreq:
-            item["c"] = changefreq
+            item["c"] = getattr(changefreq, "value", changefreq)
 
         if priority is not None:
             if isinstance(priority, (float, int)):
@@ -145,7 +154,7 @@ class Context:
             changefreq = item.get("c")
             if changefreq:
                 changefreq_el = ET.Element("changefreq")
-                changefreq_el.text = changefreq.name  # name of enum member
+                changefreq_el.text = changefreq
                 url_el.append(changefreq_el)
 
             priority = item.get("y")

@@ -18,7 +18,7 @@ def _get_testing_requirements():
 
 setuptools.setup(
     name="paka.sitemaps",
-    version="1.4.0",
+    version="1.5.0",
     packages=setuptools.find_packages(),
     install_requires=_get_install_requirements(),
     extras_require={"testing": _get_testing_requirements()},
